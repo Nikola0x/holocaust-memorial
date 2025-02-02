@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holocaust Memorial - Remember & Reflect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #283593;
+            --accent-color: #d32f2f;
+            --light-gray: #ffffff;
+            --text-color: #212121;
+            --transition-speed: 0.4s;
+            --flame-glow: 0 0 20px rgba(255, 100, 0, 0.6);
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            line-height: 1.7;
+            color: var(--text-color);
+            overflow-x: hidden;
+            background-color: var(--light-gray);
+        }
+
+        nav {
+            background-color: rgba(26, 35, 126, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all var(--transition-speed);
+        }
+
+        nav.scrolled {
+            padding: 0.8rem 0;
+            background-color: rgba(26, 35, 126, 0.95);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            color: white;
+            text-decoration: none;
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all var(--transition-speed);
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 15px rgba(255,255,255,0.5);
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            margin: 0 0.5rem;
+            border-radius: 4px;
+            transition: all var(--transition-speed);
+            position: relative;
+            font-size: 1.1rem;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: white;
+            transition: all var(--transition-speed);
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0,0,0,0.7)), url('/images/background.jpg') center/cover fixed;
+    color: white;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 20%, black 100%);
+            opacity: 0.7;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1.2s forwards;
+            position: relative;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero p {
+            font-size: 1.8rem;
+            max-width: 800px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1.2s 0.3s forwards;
+            position: relative;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+     
+        .stories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .story-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: all var(--transition-speed);
+            position: relative;
+        }
+
+        .story-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+        }
+
+        .story-image {
+            height: 250px;
+            background-color: var(--secondary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(0,0,0,0.2), transparent);
+        }
+
+        .story-content {
+            padding: 2rem;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes flicker {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+
+        @keyframes innerGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        .interactive-map {
+            height: 600px;
+            background-color: var(--light-gray);
+            margin: 6rem auto;
+            max-width: 1400px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .testimonials {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonials::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+
+        .testimonial-slider {
+            max-width: 1000px;
+            margin: 4rem auto;
+            padding: 3rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 4rem;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+            transition: all var(--transition-speed);
+        }
+
+        footer a:hover {
+            color: rgba(255,255,255,0.8);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-logo {
+                margin-bottom: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero p {
+                font-size: 1.4rem;
+            }
+
+            .stories-grid {
+                grid-template-columns: 1fr;
+                padding: 4rem 1rem;
+            }
+
+           
+        }
+        .story-image1 {
+    background: url('images/image1.jpg') center/cover;
+    height: 200px; 
+}
+.story-image2 {
+    background: url('images/image2.jpg') center/cover;
+    height: 200px; 
+}
+.story-image3 {
+    background: url('images/image3.jpg') center/cover;
+    height: 200px; 
+}
+.story-card  {
+    text-decoration: none; 
+    color: inherit; 
+    display: block; 
+}
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="nav-logo">Holocaust Memorial</a>
+            <div class="nav-links">
+                <a href="/" class="active">Home</a>
+               
+                <a href="/timeline">Timeline</a>
+                
+                <a href="/contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h1>Never Forget</h1>
+            <p>Preserving Memory. Honoring Lives. Educating Humanity.</p>
+        </section>
+
+      
+        <section class="stories-grid">
+            <a href="https://www.youtube.com/watch?v=JVAAEhD5dWY" class="story-card" data-aos="fade-up">
+                <div class="story-image1"></div>
+                <div class="story-content">
+                    <h3>Personal Testimonies</h3>
+                    <p>Listen to survivors share their stories of courage and resilience.</p>
+                </div>
+            </a>
+            <a href="https://www.archives.gov/research/holocaust" class="story-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="story-image2"></div>
+                <div class="story-content">
+                    <h3>Historical Archives</h3>
+                    <p>Explore documented history through photographs and artifacts.</p>
+                </div>
+            </a>
+            <a href="https://www.ushmm.org/teach/teaching-materials/holocaust" class="story-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="story-image3"></div>
+                <div class="story-content">
+                    <h3>Educational Resources</h3>
+                    <p>Access materials for teaching and learning about the Holocaust.</p>
+                </div>
+            </a>
+            
+        </section>
+
+        <section class="interactive-map" data-aos="fade-up">
+            <div class="map-container">
+                <iframe 
+                    class="map-frame"
+                    frameborder="0" 
+                    scrolling="no" 
+                    marginheight="0" 
+                    marginwidth="0" 
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=5.9559,45.8179,10.4923,47.8084&layer=mapnik">
+                </iframe>
+                <div class="map-info">
+                    <h3>Holocaust Sites & Impact</h3>
+                    <p id="location-info">Hover over locations to learn about their Holocaust history</p>
+                    <div class="map-legend">
+                        <div class="legend-item"><div class="country-example"></div> Country</div>
+                        <div class="legend-item"><div class="camp-example"></div> Death Camp</div>
+                    </div>
+                </div>
+                <div class="camp-boxes">
+                    <div class="camp-box" style="top: 20%; left: 40%;" data-info="Auschwitz: Largest Nazi concentration and extermination camp.">Auschwitz</div>
+                    <div class="camp-box" style="top: 30%; left: 50%;" data-info="Treblinka: One of the deadliest camps, nearly 900,000 victims.">Treblinka</div>
+                    <div class="camp-box" style="top: 40%; left: 60%;" data-info="Dachau: First Nazi concentration camp, used as a model for others.">Dachau</div>
+                    
+                    <div class="camp-box" style="top: 25%; left: 70%;" data-info="Belzec: One of the first death camps, responsible for the deaths of over 400,000 people.">Belzec</div>
+                    <div class="camp-box" style="top: 35%; left: 80%;" data-info="Sobibor: Nazi extermination camp where around 250,000 people were killed.">Sobibor</div>
+                    <div class="camp-box" style="top: 45%; left: 30%;" data-info="Majdanek: A concentration and extermination camp, over 78,000 people died there.">Majdanek</div>
+                    <div class="camp-box" style="top: 50%; left: 20%;" data-info="Mauthausen: Known for its brutal labor camps and the death of around 120,000 people.">Mauthausen</div>
+                    <div class="camp-box" style="top: 55%; left: 10%;" data-info="Bergen-Belsen: A concentration camp, known for the death of Anne Frank.">Bergen-Belsen</div>
+                </div>
+            </div>
+        </section>
+        
+        
+        <style>
+            .interactive-map {
+                background: var(--light-gray);
+                padding: 4rem 2rem;
+            }
+        
+            .map-container {
+                position: relative;
+                max-width: 1000px;
+                margin: 0 auto;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+                background: white;
+                height: 600px;
+            }
+        
+            .map-frame {
+                width: 100%;
+                height: 100%;
+            }
+        
+            .map-info {
+                padding: 2rem;
+                background: rgba(255,255,255,0.9);
+                border-top: 3px solid var(--primary-color);
+            }
+        
+            #location-info {
+                min-height: 80px;
+                padding: 1rem;
+                background: var(--light-gray);
+                border-radius: 8px;
+                margin: 1rem 0;
+                transition: all 0.3s ease;
+            }
+        
+            .map-legend {
+                display: flex;
+                gap: 2rem;
+                margin-top: 1rem;
+            }
+        
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+        
+            .country-example {
+                width: 20px;
+                height: 20px;
+                background: var(--secondary-color);
+                border: 1px solid var(--primary-color);
+            }
+        
+            .camp-example {
+                width: 15px;
+                height: 15px;
+                background: var(--accent-color);
+                border-radius: 50%;
+            }
+        
+            .camp-boxes {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+        
+            .camp-box {
+                position: absolute;
+                background: rgba(255, 0, 0, 0.8);
+                color: white;
+                padding: 5px 10px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: bold;
+            }
+        
+            .camp-box:hover::after {
+                content: attr(data-info);
+                display: block;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background: black;
+                color: white;
+                padding: 5px;
+                border-radius: 5px;
+                white-space: nowrap;
+            }
+        </style>
+        
+
+        <section class="testimonials" data-aos="fade-up">
+            <h2>Voices of Remembrance</h2>
+            <div class="testimonial-slider">
+                <div class="slider-container">
+                    <div class="slide active">
+                        <div class="quote-icon">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+                        <blockquote>
+                            "Those who cannot remember the past are condemned to repeat it. This memorial stands as a 
+                            testament to the resilience of the human spirit and a warning to future generations."
+                        </blockquote>
+                        <div class="author">
+                            <h4>Eva Schloss</h4>
+                            <p>Holocaust Survivor & Educator</p>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="quote-icon">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+                        <blockquote>
+                            "In remembering, we honor their lives. In educating, we protect our future. Every visit 
+                            here strengthens my commitment to fighting hatred in all its forms."
+                        </blockquote>
+                        <div class="author">
+                            <h4>Dr. Michael Bernstein</h4>
+                            <p>Historian & Researcher</p>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="quote-icon">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+                        <blockquote>
+                            "The weight of history here is profound. This memorial serves as both a classroom and 
+                            a sacred space for reflection."
+                        </blockquote>
+                        <div class="author">
+                            <h4>Rachel Goldstein</h4>
+                            <p>Visiting Educator</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-dots"></div>
+            </div>
+        </section>
+        
+        <style>
+            .testimonial-slider {
+                position: relative;
+                padding: 3rem 2rem;
+            }
+        
+            .slider-container {
+                position: relative;
+                min-height: 300px;
+            }
+        
+            .slide {
+                position: absolute;
+                width: 100%;
+                opacity: 0;
+                transition: all 0.6s ease-in-out;
+                transform: translateY(20px);
+            }
+        
+            .slide.active {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        
+            blockquote {
+                font-size: 1.4rem;
+                line-height: 1.8;
+                margin: 2rem auto;
+                max-width: 800px;
+                position: relative;
+                font-style: italic;
+            }
+        
+            .quote-icon {
+                color: rgba(255,255,255,0.3);
+                font-size: 3rem;
+                margin-bottom: 1rem;
+            }
+        
+            .author {
+                margin-top: 2rem;
+                border-top: 1px solid rgba(255,255,255,0.2);
+                padding-top: 1.5rem;
+            }
+        
+            .author h4 {
+                font-size: 1.2rem;
+                margin-bottom: 0.5rem;
+            }
+        
+            .author p {
+                font-size: 1rem;
+                opacity: 0.9;
+            }
+        
+            .slider-dots {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                margin-top: 2rem;
+            }
+        
+            .slider-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.3);
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+        
+            .slider-dot.active {
+                background: var(--accent-color);
+                transform: scale(1.2);
+            }
+        </style>
+        
+        <script>
+            const slides = document.querySelectorAll('.slide');
+            const dotsContainer = document.querySelector('.slider-dots');
+            let currentSlide = 0;
+        
+            slides.forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.classList.add('slider-dot');
+                if (idx === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(idx));
+                dotsContainer.appendChild(dot);
+            });
+        
+            function showSlide(index) {
+                slides.forEach((slide, idx) => {
+                    slide.classList.toggle('active', idx === index);
+                });
+                document.querySelectorAll('.slider-dot').forEach((dot, idx) => {
+                    dot.classList.toggle('active', idx === index);
+                });
+            }
+        
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }
+        
+            function goToSlide(index) {
+                currentSlide = index;
+                showSlide(currentSlide);
+            }
+        
+            setInterval(nextSlide, 8000);
+        </script>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div>
+                <h3>About Us</h3>
+                <p>Dedicated to preserving the memory of the Holocaust and educating future generations.</p>
+            </div>
+
+           
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+  
+        AOS.init({
+            duration: 1200,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
+
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            const scrolled = window.scrollY > 100;
+            
+            nav.classList.toggle('scrolled', scrolled);
+
+            const hero = document.querySelector('.hero');
+            const yPos = -window.scrollY * 0.5;
+            hero.style.backgroundPositionY = `${yPos}px`;
+        });
+    </script>
+</body>
+</html>

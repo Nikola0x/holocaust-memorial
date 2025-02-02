@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holocaust Memorial - Interactive Timeline</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #283593;
+            --accent-color: #c0392b;
+            --timeline-color: #7f8c8d;
+            --light-bg: #ffffff;
+            --text-color: #212121;
+            --transition: all 0.3s ease;
+        }
+        
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Merriweather', serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
+
+        @media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .nav-logo {
+        margin-bottom: 1rem;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+    }
+
+    .hero p {
+        font-size: 1.4rem;
+    }
+
+    .stories-grid {
+        grid-template-columns: 1fr;
+        padding: 4rem 1rem;
+    }
+
+   
+} 
+nav {
+    background-color: rgba(26, 35, 126, 0.85);
+    backdrop-filter: blur(10px);
+    padding: 1.2rem 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    transition: all var(--transition-speed);
+}
+
+nav.scrolled {
+    padding: 0.8rem 0;
+    background-color: rgba(26, 35, 126, 0.95);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-logo {
+    color: white;
+    text-decoration: none;
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: all var(--transition-speed);
+}
+
+.nav-logo:hover {
+    transform: scale(1.05);
+    text-shadow: 0 0 15px rgba(255,255,255,0.5);
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    padding: 0.6rem 1.2rem;
+    margin: 0 0.5rem;
+    border-radius: 4px;
+    transition: all var(--transition-speed);
+    position: relative;
+    font-size: 1.1rem;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: white;
+    transition: all var(--transition-speed);
+    transform: translateX(-50%);
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+    width: 100%;
+}
+
+
+
+.timeline-header {
+    padding: 8rem 2rem 4rem;
+    text-align: center;
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('images/background.jpg') center/cover;
+    color: white;
+}
+
+
+        .timeline-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s forwards;
+        }
+
+        .timeline-header p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            animation: fadeInUp 1s 0.3s forwards;
+        }
+
+        .timeline {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: var(--timeline-color);
+        }
+
+        .timeline-item {
+            width: calc(50% - 3rem);
+            margin: 3rem 0;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: var(--transition);
+        }
+
+        .timeline-item:nth-child(odd) {
+            margin-left: auto;
+            padding-left: 3rem;
+        }
+
+        .timeline-item:nth-child(even) {
+            margin-right: auto;
+            padding-right: 3rem;
+            text-align: right;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .timeline-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .timeline-date {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .timeline-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .timeline-details {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .timeline-details.active {
+            display: block;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            top: 2rem;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-marker {
+            left: -10px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-marker {
+            right: -10px;
+        }
+
+
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        footer {
+            background: var(--primary-color);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="nav-logo">Holocaust Memorial</a>
+            <div class="nav-links">
+                <a href="/" >Home</a>
+                <a href="/timeline"class="active">Timeline</a>
+                <a href="/resources" >Resources</a>
+                <a href="/contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="timeline-header">
+        <h1>The Holocaust Timeline: 1933-1945</h1>
+        <p>A chronological journey through one of history's darkest periods, documenting key events and preserving the memory of millions.</p>
+    </header>
+
+
+
+    <main class="timeline">
+        <div class="timeline-item" data-aos="fade-right">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+                <span class="timeline-date">January 30, 1933</span>
+                <h3 class="timeline-title">Hitler Appointed Chancellor</h3>
+                <p>Adolf Hitler is appointed Chancellor of Germany by President Paul von Hindenburg.</p>
+                <div class="timeline-details">
+                    <p>This marked the beginning of the Nazi regime in Germany, leading to rapid implementation of antisemitic policies and the systematic persecution of Jews.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item" data-aos="fade-left">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+                <span class="timeline-date">September 15, 1935</span>
+                <h3 class="timeline-title">Nuremberg Laws Enacted</h3>
+                <p>The Nuremberg Laws are passed, stripping German Jews of their citizenship and basic rights.</p>
+                <div class="timeline-details">
+                    <p>These laws institutionalized many of the racial theories prevalent in Nazi ideology and would serve as the legal framework for the systematic persecution of Jews in Germany.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item" data-aos="fade-right">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+                <span class="timeline-date">November 9-10, 1938</span>
+                <h3 class="timeline-title">Kristallnacht</h3>
+                <p>The "Night of Broken Glass" - a coordinated attack against Jews throughout Nazi Germany.</p>
+                <div class="timeline-details">
+                    <p>This pogrom resulted in the destruction of Jewish businesses, synagogues, and homes, while about 30,000 Jewish men were arrested and sent to concentration camps.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item" data-aos="fade-left">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+                <span class="timeline-date">September 1, 1939</span>
+                <h3 class="timeline-title">World War II Begins</h3>
+                <p>Germany invades Poland, marking the beginning of World War II in Europe.</p>
+                <div class="timeline-details">
+                    <p>The invasion of Poland led to the establishment of ghettos and the acceleration of anti-Jewish policies in occupied territories.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item" data-aos="fade-right">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+                <span class="timeline-date">January 27, 1945</span>
+                <h3 class="timeline-title">Liberation of Auschwitz</h3>
+                <p>Soviet troops liberate the Auschwitz-Birkenau concentration camp complex.</p>
+                <div class="timeline-details">
+                    <p>The liberation revealed the full horror of the Nazi genocide to the world. More than 1.1 million people were murdered at Auschwitz, including nearly one million Jews.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+   
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+      
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 200
+        });
+
+        document.querySelectorAll('.timeline-content').forEach(item => {
+            item.addEventListener('click', () => {
+                const details = item.querySelector('.timeline-details');
+                details.classList.toggle('active');
+            });
+        });
+
+        document.querySelectorAll('.timeline-nav button').forEach(button => {
+            button.addEventListener('click', () => {
+                const year = button.dataset.year;
+                const targetItem = document.querySelector(`.timeline-item [data-year="${year}"]`);
+                if (targetItem) {
+                    targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                document.querySelectorAll('.timeline-nav button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            observer.observe(item);
+        });
+    </script>
+</body>
+</html>
